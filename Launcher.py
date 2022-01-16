@@ -21,7 +21,7 @@ class Launcher(object):
         # create figure with adjusted graph
         self.createFigure()
         self.createParameterButton()
-#        self.createAngleSlider()
+        self.createAngleSlider()
         plt.show()
     
     
@@ -75,7 +75,7 @@ class Launcher(object):
             ax=ax_slider,
             label='Phi',
             valmin=0,
-            valmax=2*np.pi,
+            valmax=1,
             valinit=0,
         )
         self.angle_slider.on_changed(self.updateSlider)
@@ -104,12 +104,8 @@ class Launcher(object):
         self.axR.set_ylim( -3 , 3 )
         
         
-#    def plotRadialOrbitPoint(self, phival):
-#        
-#        r_int = self.r_interp(phival)
-#        
+    def updateSlider(self, phival):
+        self.point.set_xdata(self.x_interp(phival))
+        self.point.set_ydata(self.y_interp(phival))
+        self.fig.canvas.draw_idle()
         
-#    def updateSlider(self, val):
-#
-#        line.set_ydata(f(t, amp_slider.val, freq_slider.val))
-#        fig.canvas.draw_idle()
