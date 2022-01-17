@@ -22,6 +22,8 @@ class Launcher(object):
         self.createFigure()
         self.createParameterButton()
         self.createAngleSlider()
+        
+        # make active plot
         plt.show()
     
     
@@ -59,6 +61,7 @@ class Launcher(object):
                 self.e = 1.1
                 self.orbiter.setOrbit( self.e, phi0=-2.35, phiF=2.35 )
             
+            self.resetPlots()
             self.plotRadialOrbit( label )
             self.plotPotentialEnergy( label )
         
@@ -108,7 +111,6 @@ class Launcher(object):
 
     def plotPotentialEnergy(self, label):
         
-        r   = self.orbiter.orbit
         phi = self.orbiter.phi
         Ubar = self.orbiter.energy
         
@@ -116,7 +118,6 @@ class Launcher(object):
         Ubar_prof = self.orbiter.energy_profile
         r_prof    = self.orbiter.r_profile
         
-
         self.u_interp = interp1d( phi_norm, Ubar, kind='cubic')
         
         labels = np.array(['e = 0', 'e < 1',  'e = 1', 'e > 1'])
@@ -125,6 +126,12 @@ class Launcher(object):
         
         self.axU.plot( r_prof, Ubar_prof, color=color[0] )
         self.Upoint, = self.axU.plot( [self.r_interp(0)], [self.u_interp(0)], 'ko', markersize=5  )
+
+
+    def resetPlots(self):
+        
+        self.axR.cla()
+        self.axU.cla()
         
         
     def updateSlider(self, phival):
