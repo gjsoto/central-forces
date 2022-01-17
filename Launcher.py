@@ -37,7 +37,8 @@ class Launcher(object):
         
         # create line for radial orbit
         self.fig.subplots_adjust(left = 0.2, bottom = 0.25)
-        self.radial = self.plotRadialOrbit( 'e = 0' )
+        self.plotRadialOrbit( 'e = 0' )
+        self.plotPotentialEnergy( 'e = 0' )
         
         plt.show()
     
@@ -59,6 +60,7 @@ class Launcher(object):
                 self.orbiter.setOrbit( self.e, phi0=-2.35, phiF=2.35 )
             
             self.plotRadialOrbit( label )
+            self.plotPotentialEnergy( label )
         
         ax_param = self.fig.add_axes([0.02, 0.4, 0.1, 0.25])
         self.param_button = RadioButtons(ax_param, ['e = 0', 'e < 1', 'e = 1', 'e > 1'],
@@ -102,10 +104,35 @@ class Launcher(object):
         self.point, = self.axR.plot( [self.x_interp(0)], [self.y_interp(0)], 'ko', markersize=5  )
         self.axR.set_xlim( -3 , 3 )
         self.axR.set_ylim( -3 , 3 )
+
+
+    def plotPotentialEnergy(self, label):
+        
+        r   = self.orbiter.orbit
+        phi = self.orbiter.phi
+        Ubar = self.orbiter.energy
+        
+        phi_norm = (phi - phi.min() ) / phi.max()
+        Ubar_prof = self.orbiter.energy_profile
+        r_prof    = self.orbiter.r_profile
+        
+
+        self.u_interp = interp1d( phi_norm, Ubar, kind='cubic')
+        
+        labels = np.array(['e = 0', 'e < 1',  'e = 1', 'e > 1'])
+        colors = np.array(['C4', 'C1', 'C3', 'C0'])
+        color = [colors[n] for n,l in enumerate(labels) if label==l]
+        
+        self.axU.plot( r_prof, Ubar_prof, color=color[0] )
+        self.Upoint, = self.axU.plot( [self.r_interp(0)], [self.u_interp(0)], 'ko', markersize=5  )
         
         
     def updateSlider(self, phival):
         self.point.set_xdata(self.x_interp(phival))
         self.point.set_ydata(self.y_interp(phival))
+
+        self.Upoint.set_xdata(self.r_interp(phival))
+        self.Upoint.set_ydata(self.u_interp(phival))
+        
         self.fig.canvas.draw_idle()
         

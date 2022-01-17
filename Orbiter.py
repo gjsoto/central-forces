@@ -17,8 +17,11 @@ class Orbiter(object):
         self.l = 1
         self.a = 1
         
+        self.r_profile = np.linspace( 0.5 , 5, 1000)[1:]
+        
         # create generic orbit
         self.setOrbit( 0 )
+    
     
     def setOrbit( self, e=0, phi0=0, phiF=2*np.pi, phiN=1000 ):
         # define angles of orbit
@@ -27,6 +30,8 @@ class Orbiter(object):
         self.orbit  = self.inverseSquareOrbit( e )
         # calculate potential energy
         self.energy = self.inverseSquareEnergy( e )
+        self.energy_profile = self.inverseSquareEnergy( e, calculate_r=False )
+    
     
     def inverseSquareOrbit(self, e):
         # get orbit parameters
@@ -38,9 +43,12 @@ class Orbiter(object):
         return r
         
     
-    def inverseSquareEnergy(self, e):
+    def inverseSquareEnergy(self, e, calculate_r=True):
         # calculate orbit
-        r = self.inverseSquareOrbit( e )
+        if calculate_r:
+            r = self.inverseSquareOrbit( e )
+        else:
+            r = self.r_profile
         
         # get orbit parameters
         m = self.m
@@ -51,4 +59,4 @@ class Orbiter(object):
         Ubar = 0.5*m*l**2/r**2 - m*a/r
         return Ubar
         
-        
+    
