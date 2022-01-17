@@ -17,6 +17,7 @@ class Launcher(object):
         
         self.e = 0
         self.orbiter = Orbiter()
+        self.color='C4'
         
         # create figure with adjusted graph
         self.createFigure()
@@ -51,15 +52,19 @@ class Launcher(object):
             if label == 'e = 0':
                 self.e = 0
                 self.orbiter.setOrbit( self.e )
+                self.color = 'C4'
             elif label ==  'e < 1':
                 self.e = 0.5
                 self.orbiter.setOrbit( self.e )
+                self.color = 'C1'
             elif label == 'e = 1':
                 self.e = 1
                 self.orbiter.setOrbit( self.e, phiF=2*np.pi*0.99 )
+                self.color = 'C3'
             elif label == 'e > 1':
                 self.e = 1.1
-                self.orbiter.setOrbit( self.e, phi0=-2.35, phiF=2.35 )
+                self.orbiter.setOrbit( self.e, phi0=-2.335, phiF=2.335 )
+                self.color = 'C0'
             
             self.resetPlots()
             self.plotRadialOrbit( label )
@@ -99,12 +104,16 @@ class Launcher(object):
         self.x_interp = interp1d( phi_norm, x_, kind='cubic')
         self.y_interp = interp1d( phi_norm, y_, kind='cubic')
         
-        labels = np.array(['e = 0', 'e < 1',  'e = 1', 'e > 1'])
-        colors = np.array(['C4', 'C1', 'C3', 'C0'])
-        color = [colors[n] for n,l in enumerate(labels) if label==l]
+        color = self.color
         
-        self.axR.plot( x_, y_, color=color[0] )
+        self.axR.plot( x_, y_, color=color )
+        self.axR.plot( [0], [0], 'kx', markersize=5  )
+        self.axR.plot( [0], [0], 'wx', markersize=2  )
         self.point, = self.axR.plot( [self.x_interp(0)], [self.y_interp(0)], 'ko', markersize=5  )
+        
+        self.axR.set_xlabel('X-Component')
+        self.axR.set_ylabel('Y-Component')
+        
         self.axR.set_xlim( -3 , 3 )
         self.axR.set_ylim( -3 , 3 )
 
@@ -115,17 +124,23 @@ class Launcher(object):
         Ubar = self.orbiter.energy
         
         phi_norm = (phi - phi.min() ) / phi.max()
+        Ubar_max  = self.orbiter.energy_max
         Ubar_prof = self.orbiter.energy_profile
         r_prof    = self.orbiter.r_profile
+        zero_line = np.zeros( len(r_prof) )
         
         self.u_interp = interp1d( phi_norm, Ubar, kind='cubic')
         
-        labels = np.array(['e = 0', 'e < 1',  'e = 1', 'e > 1'])
-        colors = np.array(['C4', 'C1', 'C3', 'C0'])
-        color = [colors[n] for n,l in enumerate(labels) if label==l]
+        color = self.color 
         
-        self.axU.plot( r_prof, Ubar_prof, color=color[0] )
-        self.Upoint, = self.axU.plot( [self.r_interp(0)], [self.u_interp(0)], 'ko', markersize=5  )
+        self.axU.plot( r_prof, zero_line, '--', color='k' )
+        self.axU.plot( r_prof, Ubar_max, '--', color=color )
+        self.axU.plot( r_prof, Ubar_prof, color='k' )
+        
+        self.axU.set_xlabel('Orbital Radius')
+        self.axU.set_ylabel('Effective Potential Energy')
+        
+        self.Upoint, = self.axU.plot( [self.r_interp(0)], [self.u_interp(0)], 'o', color=color, markersize=5  )
 
 
     def resetPlots(self):
