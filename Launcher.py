@@ -59,7 +59,7 @@ class Launcher(object):
                 self.color = 'C1'
             elif label == 'e = 1':
                 self.e = 1
-                self.orbiter.setOrbit( self.e, phiF=2*np.pi*0.99 )
+                self.orbiter.setOrbit( self.e, phi0=-2.42, phiF=2.42 )
                 self.color = 'C3'
             elif label == 'e > 1':
                 self.e = 1.1
@@ -96,7 +96,8 @@ class Launcher(object):
         
         r   = self.orbiter.orbit
         phi = self.orbiter.phi
-        phi_norm = (phi - phi.min() ) / phi.max()
+        phi_norm = phi - phi.min() 
+        phi_norm /= phi_norm.max()
         self.r_interp = interp1d( phi_norm, r, kind='cubic')
         
         x_ = r*np.cos(phi)
@@ -123,7 +124,8 @@ class Launcher(object):
         phi = self.orbiter.phi
         Ubar = self.orbiter.energy
         
-        phi_norm = (phi - phi.min() ) / phi.max()
+        phi_norm = phi - phi.min()
+        phi_norm /= phi_norm.max()
         Ubar_max  = self.orbiter.energy_max
         Ubar_prof = self.orbiter.energy_profile
         r_prof    = self.orbiter.r_profile

@@ -52,13 +52,13 @@ class Orbiter(object):
         return r
         
     
-    def inverseSquareEnergy(self, e, calculate_r=True, r_array=None):
+    def inverseSquareEnergy(self, e, calculate_r=True):
         
         # calculate orbit
         if calculate_r:
             r = self.inverseSquareOrbit( e )
         else:
-            r = r_array if r_array is not None else self.r_profile
+            r = self.r_profile
         
         # get orbit parameters
         m = self.m
