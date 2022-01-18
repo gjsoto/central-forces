@@ -31,7 +31,7 @@ class Launcher(object):
     def createFigure(self):
         
         # define and save figure to self
-        self.fig = plt.figure(figsize=(10,5))
+        self.fig = plt.figure(figsize=(12,5.5))
         
         # generate axes for radial orbit and potential energy
         axR, axU = self.fig.subplots(nrows=1, ncols=2)
@@ -39,7 +39,7 @@ class Launcher(object):
         self.axU = axU
         
         # create line for radial orbit
-        self.fig.subplots_adjust(left = 0.2, bottom = 0.25)
+        self.fig.subplots_adjust(left = 0.19, bottom = 0.25)
         self.plotRadialOrbit( 'e = 0' )
         self.plotPotentialEnergy( 'e = 0' )
         
@@ -121,6 +121,7 @@ class Launcher(object):
 
     def plotPotentialEnergy(self, label):
         
+        r   = self.orbiter.orbit
         phi = self.orbiter.phi
         Ubar = self.orbiter.energy
         
@@ -138,6 +139,10 @@ class Launcher(object):
         self.axU.plot( r_prof, zero_line, '--', color='k' )
         self.axU.plot( r_prof, Ubar_max, '--', color=color )
         self.axU.plot( r_prof, Ubar_prof, color='k' )
+        self.axU.plot( r, Ubar, color=color )
+        
+        self.axU.text( 2.5,  0.025, "UNBOUND ORBIT")
+        self.axU.text( 2.5, -0.05,  "BOUND ORBIT")
         
         self.axU.set_xlabel('Orbital Radius')
         self.axU.set_ylabel('Effective Potential Energy')
